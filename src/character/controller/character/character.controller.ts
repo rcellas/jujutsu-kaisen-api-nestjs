@@ -7,12 +7,13 @@ import {
   UseInterceptors,
   Param,
   Put,
-  Delete
+  Delete,
+  BadRequestException
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { CreateCharacterDto } from 'src/character/dto/CreateCharacter';
-import { Character } from 'src/character/schema/characters.schema';
+import { CreateCharacterDto } from '../../dto/CreateCharacter';
+import { Character } from '../../schema/characters.schema';
 import { CharacterService } from '../../service/character/character.service';
 
 @Controller('character')
@@ -37,6 +38,11 @@ export class CharacterController {
   ): Promise<Character> {
     // if (imagen) {
     //   createCharacterDTO.imagen = imagen.filename; // Asigna el nombre del archivo al campo de imagen
+    // }
+    // comprueba si el personaje ya existe
+    // const character = await this.characterService.CharacterName(createCharacterDTO.name);
+    // if (character) {
+    //   throw new BadRequestException('El personaje ya existe');
     // }
     return this.characterService.createCharacter(createCharacterDTO);
   }

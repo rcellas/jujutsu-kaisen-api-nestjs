@@ -1,7 +1,5 @@
 import { Document, HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { type } from 'os';
-import exp from 'constants';
 
 export type CharacterDocument = HydratedDocument<Character>;
 export enum StatusEnum {
@@ -13,6 +11,12 @@ export enum StatusEnum {
 export enum GenderEnum{
   MALE="Male",
   FEMALE='Female',
+  UNKNOWN='Unknown'
+}
+
+export enum SpecieEnum{
+  CURSED_SPIRIT="Cursed Spirit",
+  HUMAN='Human',
   UNKNOWN='Unknown'
 }
 
@@ -30,7 +34,7 @@ export class Character extends Document {
   @Prop()
   imagen: string;
 
-  @Prop()
+  @Prop({required: true,enum:SpecieEnum,default:SpecieEnum.UNKNOWN})
   specie: string;
 }
 

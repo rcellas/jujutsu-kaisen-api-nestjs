@@ -10,11 +10,12 @@ export class CreateCharacterDto {
     gender: string;
 
     @IsString()
-    @IsEnum(['Alive', 'Dead', 'unknown'])
+    @IsEnum(['Alive', 'Dead', 'Unknown'])
     status: string;
 
     @IsString()
-    species: string;
+    @IsEnum(['Cursed Spirit', 'Human', 'Unknown'])
+    specie: string;
 
 
     @ApiProperty()

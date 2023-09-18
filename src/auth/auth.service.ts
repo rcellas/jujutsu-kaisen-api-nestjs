@@ -23,7 +23,7 @@ export class AuthService {
     if(!user) new HttpException('USER_NOT_FOUND', 404);
 
     const isMatch = await compare(password, user.password);
-    if(!isMatch) new HttpException('PASSWORD_INCORRECT', 400);
+    if(!isMatch) throw new HttpException('PASSWORD_INCORRECT', 400);
     return user;
   }
 }

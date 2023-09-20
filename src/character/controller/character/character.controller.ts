@@ -7,14 +7,19 @@ import {
   UseInterceptors,
   Param,
   Put,
-  Delete
+  Delete,
+  UseGuards
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CreateCharacterDto } from 'src/character/dto/CreateCharacter';
 import { Character } from 'src/character/schema/characters.schema';
 import { CharacterService } from '../../service/character/character.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('character')
 @Controller('character')
 export class CharacterController {
   constructor(private readonly characterService: CharacterService) {}
@@ -30,6 +35,7 @@ export class CharacterController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('imagen'))
   async createCharacter(
     @Body() createCharacterDTO: CreateCharacterDto,

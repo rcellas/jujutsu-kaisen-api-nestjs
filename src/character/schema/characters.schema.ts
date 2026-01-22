@@ -5,33 +5,51 @@ import exp from 'constants';
 
 export type CharacterDocument = HydratedDocument<Character>;
 export enum StatusEnum {
-    ALIVE = 'Alive',
-    DEAD = 'Dead',
-    UNKNOWN = 'Unknown'
+  ALIVE = 'Alive',
+  DEAD = 'Dead',
+  UNKNOWN = 'Unknown'
 }
 
-export enum GenderEnum{
-  MALE="Male",
-  FEMALE='Female',
-  UNKNOWN='Unknown'
+export enum GenderEnum {
+  MALE = "Male",
+  FEMALE = 'Female',
+  UNKNOWN = 'Unknown'
 }
 
 @Schema()
 export class Character extends Document {
-  @Prop({required: true})
+  @Prop({ required: true })
   name: string;
 
-  @Prop({required: true, enum:GenderEnum,default:GenderEnum.UNKNOWN})
+  @Prop({ enum: GenderEnum, default: GenderEnum.UNKNOWN })
   gender: string;
 
-  @Prop({required: true,enum:StatusEnum,default:StatusEnum.UNKNOWN})
+  @Prop({ enum: StatusEnum, default: StatusEnum.UNKNOWN })
   status: string;
 
   @Prop()
-  imagen: string;
+  mangaImage: string;
+
+  @Prop()
+  animeImage: string;
 
   @Prop()
   specie: string;
+
+  @Prop()
+  kanji: string;
+
+  @Prop()
+  romaji: string;
+
+  @Prop()
+  occupation: string;
+
+  @Prop()
+  firstAppearanceManga: string;
+
+  @Prop()
+  firstAppearanceAnime: string;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);

@@ -10,15 +10,31 @@ export class CreateCharacterDto {
     gender: string;
 
     @IsString()
-    @IsEnum(['Alive', 'Dead', 'unknown'])
     status: string;
 
     @IsString()
-    species: string;
-
+    specie: string;
 
     @ApiProperty()
-    @IsUrl()
-    imagen: string;
+    @IsString()
+    mangaImage: string;
 
+    @ApiProperty()
+    @IsString()
+    animeImage: string;
+
+    @IsString()
+    kanji: string;
+
+    @IsString()
+    romaji: string;
+
+    @IsString()
+    occupation: string;
+
+    @IsString()
+    firstAppearanceManga: string;
+
+    @IsString()
+    firstAppearanceAnime: string;
 }

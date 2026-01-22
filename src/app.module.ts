@@ -4,6 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { CharacterModule } from './character/character.module';
+import { MangaModule } from './manga/manga.module';
+import { EpisodeModule } from './episode/episode.module';
+import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { CharacterModule } from './character/character.module';
       inject: [ConfigService],
     }),
     CharacterModule,
+    MangaModule,
+    EpisodeModule,
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Character } from '../../character/schema/characters.schema';
-import { FandomScraperUtil } from '../utils/fandom-scraper.util';
+import { ScraperUtil } from '../utils/scraper.util';
 
 @Injectable()
 export class CharacterScraper {
@@ -13,7 +13,7 @@ export class CharacterScraper {
 
     async scrape(): Promise<void> {
         this.logger.log('Starting Character Scraping...');
-        const $ = await FandomScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Lista_de_Personajes`);
+        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Lista_de_Personajes`);
         if (!$) return;
 
         const characterLinks: Set<string> = new Set();
@@ -36,7 +36,7 @@ export class CharacterScraper {
     }
 
     private async scrapeSingleCharacter(url: string) {
-        const $ = await FandomScraperUtil.fetchPage(url);
+        const $ = await ScraperUtil.fetchPage(url);
         if (!$) return;
 
         const name = $('h1#firstHeading, h1.page-header__title').text().trim();
@@ -48,10 +48,10 @@ export class CharacterScraper {
         const statusEl = infobox.find('[data-source="estado"], [data-source="status"]');
         if (statusEl.length) {
             const collapsible = statusEl.find('.mw-collapsible-content');
-            status = FandomScraperUtil.cleanText(collapsible.length ? collapsible.text() : statusEl.find('.pi-data-value').text());
+            status = ScraperUtil.cleanText(collapsible.length ? collapsible.text() : statusEl.find('.pi-data-value').text());
         }
 
-        const getInfo = (source: string) => FandomScraperUtil.getInfoboxValue(infobox, source);
+        const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
 
         let gender = getInfo('gender');
         if (gender === 'Unknown') gender = getInfo('género');
@@ -77,7 +77,7 @@ export class CharacterScraper {
             tabs.each((i, el) => {
                 const label = $(el).text().trim().toLowerCase();
                 const content = contents.eq(i);
-                const imgUrl = FandomScraperUtil.extractImage(content);
+                const imgUrl = ScraperUtil.extractImage(content);
 
                 if (label.includes('anime')) {
                     animeImage = imgUrl;
@@ -86,7 +86,7 @@ export class CharacterScraper {
                 }
             });
         } else {
-            animeImage = FandomScraperUtil.extractImage(infobox.find('figure.pi-image'));
+            animeImage = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
         }
 
         await this.characterModel.updateOne(

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Location } from '../../location/schema/location.schema';
-import { FandomScraperUtil } from '../utils/fandom-scraper.util';
+import { ScraperUtil } from '../utils/scraper.util';
 
 @Injectable()
 export class LocationScraper {
@@ -13,7 +13,7 @@ export class LocationScraper {
 
     async scrape(): Promise<void> {
         this.logger.log('Starting Location Scraping...');
-        const $ = await FandomScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Categor%C3%ADa:Lugares`);
+        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Categor%C3%ADa:Lugares`);
         if (!$) return;
 
         const locationLinks: Set<string> = new Set();
@@ -33,7 +33,7 @@ export class LocationScraper {
     }
 
     private async scrapeSingleLocation(url: string) {
-        const $ = await FandomScraperUtil.fetchPage(url);
+        const $ = await ScraperUtil.fetchPage(url);
         if (!$) return;
 
         const name = $('h1#firstHeading, h1.page-header__title').text().trim();
@@ -43,12 +43,12 @@ export class LocationScraper {
         $('#mw-content-text p').each((_, el) => {
             const text = $(el).text().trim();
             if (!description && text.length > 20 && !text.includes('se refiere a')) {
-                description = FandomScraperUtil.cleanText(text);
+                description = ScraperUtil.cleanText(text);
             }
         });
 
-        const image = FandomScraperUtil.extractImage(infobox.find('figure.pi-image'));
-        let type = FandomScraperUtil.getInfoboxValue(infobox, 'tipo');
+        const image = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
+        let type = ScraperUtil.getInfoboxValue(infobox, 'tipo');
 
         await this.locationModel.updateOne(
             { name },

@@ -10,8 +10,8 @@ export class ScraperController {
     @Post('run')
     async scrapeAll() {
         await this.scraperService.scrapeCharacters();
-        await this.scraperService.scrapeEpisodes();
-        await this.scraperService.scrapeManga();
+        await this.scraperService.scrapeLocations();
+        await this.scraperService.scrapeTechniques();
         return { message: 'Scraping initiated' };
     }
 }

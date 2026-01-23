@@ -6,7 +6,6 @@ import { AppController } from './app.controller';
 import { CharacterModule } from './character/character.module';
 import { LocationModule } from './location/location.module';
 import { TechniqueModule } from './technique/technique.module';
-import { EpisodeModule } from './episode/episode.module';
 import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
@@ -24,7 +23,6 @@ import { ScraperModule } from './scraper/scraper.module';
     CharacterModule,
     LocationModule,
     TechniqueModule,
-    EpisodeModule,
     ScraperModule,
   ],
   controllers: [AppController],

@@ -4,7 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { CharacterModule } from './character/character.module';
-import { MangaModule } from './manga/manga.module';
+import { LocationModule } from './location/location.module';
+import { TechniqueModule } from './technique/technique.module';
 import { EpisodeModule } from './episode/episode.module';
 import { ScraperModule } from './scraper/scraper.module';
 
@@ -21,7 +22,8 @@ import { ScraperModule } from './scraper/scraper.module';
       inject: [ConfigService],
     }),
     CharacterModule,
-    MangaModule,
+    LocationModule,
+    TechniqueModule,
     EpisodeModule,
     ScraperModule,
   ],

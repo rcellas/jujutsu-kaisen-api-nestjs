@@ -111,20 +111,24 @@ Esta interfaz te permite explorar y probar todos los endpoints disponibles de fo
 
 ## 🌐 Endpoints Principales
 
+A continuación se listan los endpoints principales de la API. Para información detallada sobre parámetros, respuestas, códigos de estado y ejemplos completos, consulta la [documentación interactiva de Swagger](#-documentación-de-la-api).
+
 ### Personajes
 
-- `GET /character` - Obtiene todos los personajes
-- `GET /character/:id` - Obtiene un personaje por su ID
+- `GET /character` - Obtiene la lista completa de personajes
+- `GET /character/:id` - Obtiene los detalles de un personaje específico por su ID
 
 ### Localizaciones
 
-- `GET /location` - Obtiene todas las localizaciones
-- `GET /location/:id` - Obtiene una localización por su ID
+- `GET /location` - Obtiene todas las localizaciones del universo de Jujutsu Kaisen
+- `GET /location/:id` - Obtiene los detalles de una localización específica por su ID
 
 ### Técnicas
 
-- `GET /technique` - Obtiene todas las técnicas
-- `GET /technique/:id` - Obtiene una técnica por su ID
+- `GET /technique` - Obtiene todas las técnicas de hechicería maldita
+- `GET /technique/:id` - Obtiene los detalles de una técnica específica por su ID
+
+> **💡 Tip:** Utiliza la documentación de Swagger en `http://localhost:3000/documentation` para ver ejemplos de respuestas, probar los endpoints directamente y conocer todos los parámetros disponibles.
 
 ## 🧪 Testing
 

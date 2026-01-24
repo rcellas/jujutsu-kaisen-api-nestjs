@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CharacterController } from './controller/character/character.controller';
-import { CharacterService } from './service/character/character.service';
+import { CharacterController } from './controller/character.controller';
+import { CharacterService } from './service/character.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Character, CharacterSchema } from './schema/characters.schema';
 
@@ -9,4 +9,4 @@ import { Character, CharacterSchema } from './schema/characters.schema';
   controllers: [CharacterController],
   providers: [CharacterService]
 })
-export class CharacterModule {}
+export class CharacterModule { }

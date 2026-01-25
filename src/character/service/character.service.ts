@@ -24,7 +24,6 @@ export class CharacterService {
     }
 
     if (!character) {
-      // Fallback to _id if it's a valid ObjectId
       if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
         character = await this.characterModel.findById(identifier).exec();
       }

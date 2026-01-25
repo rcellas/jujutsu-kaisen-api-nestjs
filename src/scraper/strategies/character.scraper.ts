@@ -18,14 +18,11 @@ export class CharacterScraper {
 
         const characterLinks: Set<string> = new Set();
 
-        // Target character links within the content area
-        // Look for links with title attributes that are character pages
         $('.mw-content-ltr a[href^="/wiki/"][title]').each((_, el) => {
             const href = $(el).attr('href');
             const title = $(el).attr('title');
 
             if (href && title) {
-                // Exclude special pages, categories, files, and list pages
                 const excludePatterns = [
                     'List_of',
                     'Category:',
@@ -79,14 +76,13 @@ export class CharacterScraper {
         const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
 
         const gender = getInfo('gender');
-        const specie = getInfo('species');
+        const specie = getInfo('species') || getInfo('race');
         const kanji = getInfo('kanji');
-        const romaji = getInfo('rōmaji');
+        const romaji = getInfo('rōmaji') || getInfo('romaji');
         const occupation = getInfo('occupation');
         const firstAppearanceManga = getInfo('debut');
         const firstAppearanceAnime = getInfo('debutanime');
 
-        // Images using Tabs
         let animeImage = '';
         let mangaImage = '';
 
@@ -109,7 +105,6 @@ export class CharacterScraper {
         } else {
             const singleImage = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
 
-            // If only one image exists, determine if it's manga or anime based on debut info
             const isMangaOnly = (firstAppearanceAnime === 'NA' || !firstAppearanceAnime || firstAppearanceAnime === 'Unknown') && !!firstAppearanceManga;
 
             if (isMangaOnly) {

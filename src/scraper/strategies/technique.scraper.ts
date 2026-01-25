@@ -31,14 +31,12 @@ export class TechniqueScraper {
             const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/wiki/Category:${category}`);
             if (!$) continue;
 
-            // Generate clean type from category name
             const type = category.replace(/_/g, ' ').replace(/-/g, ' ');
 
             $('.category-page__member-link').each((_, el) => {
                 const href = $(el).attr('href');
                 if (href && !href.includes('Category:')) {
                     const fullUrl = `${this.baseUrl}${href}`;
-                    // Store link with its associated type
                     links.set(fullUrl, type);
                 }
             });

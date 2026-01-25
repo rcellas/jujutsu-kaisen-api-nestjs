@@ -24,7 +24,7 @@ export class Technique {
     type: string;
 
     @Prop()
-    user: string; // User of the technique
+    user: string;
 }
 
 export const TechniqueSchema = SchemaFactory.createForClass(Technique);

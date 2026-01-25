@@ -24,7 +24,7 @@ export class Location {
     image: string;
 
     @Prop()
-    type: string; // e.g., School, City, Domain
+    type: string;
 }
 
 export const LocationSchema = SchemaFactory.createForClass(Location);

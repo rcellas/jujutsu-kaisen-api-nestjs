@@ -52,7 +52,7 @@ export class ShikigamiScraper {
         const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
 
         const kanji = getInfo('kanji');
-        const romaji = getInfo('rōmaji');
+        const romaji = getInfo('rōmaji') || getInfo('romaji');
         const user = getInfo('user');
         const firstAppearanceManga = getInfo('debut');
         const firstAppearanceAnime = getInfo('debutanime');
@@ -65,7 +65,6 @@ export class ShikigamiScraper {
             }
         });
 
-        // Images
         let animeImage = '';
         let mangaImage = '';
 
@@ -88,7 +87,6 @@ export class ShikigamiScraper {
         } else {
             const singleImage = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
 
-            // If only one image exists, determine if it's manga or anime based on debut info
             const isMangaOnly = (firstAppearanceAnime === 'NA' || !firstAppearanceAnime || firstAppearanceAnime === 'Unknown') && !!firstAppearanceManga;
 
             if (isMangaOnly) {

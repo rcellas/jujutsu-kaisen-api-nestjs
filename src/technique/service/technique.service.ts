@@ -16,4 +16,25 @@ export class TechniqueService {
     async findAll(): Promise<Technique[]> {
         return this.techniqueModel.find().exec();
     }
+
+    async TechniqueId(identifier: string): Promise<Technique> {
+        let technique;
+
+        if (!isNaN(Number(identifier))) {
+            technique = await this.techniqueModel.findOne({ id: Number(identifier) }).exec();
+        } else {
+            technique = await this.techniqueModel.findOne({ name: identifier }).exec();
+        }
+
+        if (!technique) {
+            if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+                technique = await this.techniqueModel.findById(identifier).exec();
+            }
+        }
+
+        if (!technique) {
+            throw new Error(`Technique with identifier ${identifier} not found`);
+        }
+        return technique;
+    }
 }

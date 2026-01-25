@@ -13,26 +13,44 @@ export class TechniqueScraper {
 
     async scrape(): Promise<void> {
         this.logger.log('Starting Technique Scraping...');
-        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Categor%C3%ADa:T%C3%A9cnicas`);
-        if (!$) return;
 
-        const links: Set<string> = new Set();
-        $('.category-page__member-link').each((_, el) => {
-            const href = $(el).attr('href');
-            if (href && !href.includes('Categor%C3%ADa:')) {
-                links.add(`${this.baseUrl}${href}`);
-            }
-        });
+        const categories = [
+            'Innate_Techniques',
+            'Anti-Domain_Techniques',
+            'New_Shadow_Style_Techniques',
+            'Barrier_Techniques',
+            'Domain_Expansion',
+            'Cursed_Tools',
+            'Cursed_Objects'
+        ];
 
-        this.logger.log(`Found ${links.size} techniques.`);
+        const links: Map<string, string> = new Map();
 
-        for (const link of links) {
-            await this.scrapeSingleTechnique(link);
+        for (const category of categories) {
+            this.logger.log(`Scraping category: ${category}`);
+            const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/wiki/Category:${category}`);
+            if (!$) continue;
+
+            const type = category.replace(/_/g, ' ').replace(/-/g, ' ');
+
+            $('.category-page__member-link').each((_, el) => {
+                const href = $(el).attr('href');
+                if (href && !href.includes('Category:')) {
+                    const fullUrl = `${this.baseUrl}${href}`;
+                    links.set(fullUrl, type);
+                }
+            });
+        }
+
+        this.logger.log(`Found ${links.size} unique techniques.`);
+
+        for (const [link, type] of links) {
+            await this.scrapeSingleTechnique(link, type);
         }
         this.logger.log('Technique scraping completed.');
     }
 
-    private async scrapeSingleTechnique(url: string) {
+    private async scrapeSingleTechnique(url: string, type: string) {
         const $ = await ScraperUtil.fetchPage(url);
         if (!$) return;
 
@@ -47,16 +65,16 @@ export class TechniqueScraper {
             }
         });
 
-        let type = ScraperUtil.getInfoboxValue(infobox, 'class');
-        if (type === 'Unknown') type = ScraperUtil.getInfoboxValue(infobox, 'clase');
+        const user = ScraperUtil.getInfoboxValue(infobox, 'user');
 
-        let user = ScraperUtil.getInfoboxValue(infobox, 'usuario');
+        const existingTechnique = await this.techniqueModel.findOne({ name });
+        let id = existingTechnique ? existingTechnique.id : await ScraperUtil.getNextId(this.techniqueModel);
 
-        await this.techniqueModel.updateOne(
+        await this.techniqueModel.findOneAndUpdate(
             { name },
-            { name, description, type, user },
-            { upsert: true }
+            { id, name, description, type, user },
+            { upsert: true, new: true }
         );
-        this.logger.log(`Upserted technique: ${name}`);
+        this.logger.log(`Upserted technique: ${name} (Type: ${type})`);
     }
 }

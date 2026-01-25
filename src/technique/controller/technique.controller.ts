@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { TechniqueService } from '../service/technique.service';
-import { CreateTechniqueDto } from '../dto/create-technique.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('technique')
@@ -8,13 +7,13 @@ import { ApiTags } from '@nestjs/swagger';
 export class TechniqueController {
     constructor(private readonly techniqueService: TechniqueService) { }
 
-    @Post()
-    create(@Body() createTechniqueDto: CreateTechniqueDto) {
-        return this.techniqueService.create(createTechniqueDto);
-    }
-
     @Get()
     findAll() {
         return this.techniqueService.findAll();
+    }
+
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.techniqueService.TechniqueId(id);
     }
 }

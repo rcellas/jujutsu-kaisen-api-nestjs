@@ -16,4 +16,25 @@ export class LocationService {
     async findAll(): Promise<Location[]> {
         return this.locationModel.find().exec();
     }
+
+    async LocationId(identifier: string): Promise<Location> {
+        let location;
+
+        if (!isNaN(Number(identifier))) {
+            location = await this.locationModel.findOne({ id: Number(identifier) }).exec();
+        } else {
+            location = await this.locationModel.findOne({ name: identifier }).exec();
+        }
+
+        if (!location) {
+            if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+                location = await this.locationModel.findById(identifier).exec();
+            }
+        }
+
+        if (!location) {
+            throw new Error(`Location with identifier ${identifier} not found`);
+        }
+        return location;
+    }
 }

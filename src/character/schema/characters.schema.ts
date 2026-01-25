@@ -16,8 +16,18 @@ export enum GenderEnum {
   UNKNOWN = 'Unknown'
 }
 
-@Schema()
+@Schema({
+  toJSON: {
+    transform: function (doc, ret) {
+      delete ret._id;
+      delete ret.__v;
+    }
+  }
+})
 export class Character extends Document {
+  @Prop({ unique: true })
+  id: number;
+
   @Prop({ required: true })
   name: string;
 
@@ -50,6 +60,15 @@ export class Character extends Document {
 
   @Prop()
   firstAppearanceAnime: string;
+
+  @Prop()
+  location: string;
+
+  @Prop()
+  techniques: string[];
+
+  @Prop()
+  shikigamis: string[];
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);

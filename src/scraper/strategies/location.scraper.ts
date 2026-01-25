@@ -13,13 +13,13 @@ export class LocationScraper {
 
     async scrape(): Promise<void> {
         this.logger.log('Starting Location Scraping...');
-        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Categor%C3%ADa:Lugares`);
+        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/wiki/Category:Locations`);
         if (!$) return;
 
         const locationLinks: Set<string> = new Set();
         $('.category-page__member-link').each((_, el) => {
             const href = $(el).attr('href');
-            if (href && !href.includes('Categor%C3%ADa:')) {
+            if (href && !href.includes('Category:')) {
                 locationLinks.add(`${this.baseUrl}${href}`);
             }
         });
@@ -42,18 +42,21 @@ export class LocationScraper {
         let description = '';
         $('#mw-content-text p').each((_, el) => {
             const text = $(el).text().trim();
-            if (!description && text.length > 20 && !text.includes('se refiere a')) {
+            if (!description && text.length > 20 && !text.includes('refer to')) {
                 description = ScraperUtil.cleanText(text);
             }
         });
 
         const image = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
-        let type = ScraperUtil.getInfoboxValue(infobox, 'tipo');
+        let type = ScraperUtil.getInfoboxValue(infobox, 'type');
 
-        await this.locationModel.updateOne(
+        const existingLocation = await this.locationModel.findOne({ name });
+        let id = existingLocation ? existingLocation.id : await ScraperUtil.getNextId(this.locationModel);
+
+        await this.locationModel.findOneAndUpdate(
             { name },
-            { name, description, image, type },
-            { upsert: true }
+            { id, name, description, image, type },
+            { upsert: true, new: true }
         );
         this.logger.log(`Upserted location: ${name}`);
     }

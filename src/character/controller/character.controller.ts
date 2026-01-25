@@ -6,7 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('character')
 @Controller('character')
 export class CharacterController {
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(private readonly characterService: CharacterService) { }
 
   @Get()
   async getCharacters() {

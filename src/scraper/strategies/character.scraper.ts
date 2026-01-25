@@ -13,15 +13,40 @@ export class CharacterScraper {
 
     async scrape(): Promise<void> {
         this.logger.log('Starting Character Scraping...');
-        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/es/wiki/Lista_de_Personajes`);
+        const $ = await ScraperUtil.fetchPage(`${this.baseUrl}/wiki/List_of_Characters`);
         if (!$) return;
 
         const characterLinks: Set<string> = new Set();
-        $('#mw-content-text a').each((_, el) => {
+
+        // Target character links within the content area
+        // Look for links with title attributes that are character pages
+        $('.mw-content-ltr a[href^="/wiki/"][title]').each((_, el) => {
             const href = $(el).attr('href');
             const title = $(el).attr('title');
-            if (href && href.startsWith('/es/wiki/') && title) {
-                if (!href.includes(':') && !href.includes('Lista_de') && !href.includes('Anexo:')) {
+
+            if (href && title) {
+                // Exclude special pages, categories, files, and list pages
+                const excludePatterns = [
+                    'List_of',
+                    'Category:',
+                    'File:',
+                    'Template:',
+                    'Special:',
+                    'Help:',
+                    'Jujutsu_Kaisen',
+                    'Jujutsu_Sorcerer',
+                    'Cursed_Spirit',
+                    'Tokyo_Metropolitan',
+                    'Kyoto_Metropolitan',
+                    'Sorcerer_Clan',
+                    'Zenin_Family'
+                ];
+
+                const shouldExclude = excludePatterns.some(pattern =>
+                    href.includes(pattern) || title.includes(pattern)
+                );
+
+                if (!shouldExclude && !href.includes(':')) {
                     characterLinks.add(`${this.baseUrl}${href}`);
                 }
             }
@@ -45,7 +70,7 @@ export class CharacterScraper {
         if (!infobox.length) return;
 
         let status = 'Unknown';
-        const statusEl = infobox.find('[data-source="estado"], [data-source="status"]');
+        const statusEl = infobox.find('[data-source="status"], [data-source="estado"]');
         if (statusEl.length) {
             const collapsible = statusEl.find('.mw-collapsible-content');
             status = ScraperUtil.cleanText(collapsible.length ? collapsible.text() : statusEl.find('.pi-data-value').text());
@@ -53,17 +78,13 @@ export class CharacterScraper {
 
         const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
 
-        let gender = getInfo('gender');
-        if (gender === 'Unknown') gender = getInfo('género');
-
-        let specie = getInfo('species');
-        if (specie === 'Unknown') specie = getInfo('especie');
-
+        const gender = getInfo('gender');
+        const specie = getInfo('species');
         const kanji = getInfo('kanji');
         const romaji = getInfo('rōmaji');
-        const occupation = getInfo('ocupación');
-        const firstAppearanceManga = getInfo('manga');
-        const firstAppearanceAnime = getInfo('anime');
+        const occupation = getInfo('occupation');
+        const firstAppearanceManga = getInfo('debut');
+        const firstAppearanceAnime = getInfo('debutanime');
 
         // Images using Tabs
         let animeImage = '';
@@ -86,17 +107,29 @@ export class CharacterScraper {
                 }
             });
         } else {
-            animeImage = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
+            const singleImage = ScraperUtil.extractImage(infobox.find('figure.pi-image'));
+
+            // If only one image exists, determine if it's manga or anime based on debut info
+            const isMangaOnly = (firstAppearanceAnime === 'NA' || !firstAppearanceAnime || firstAppearanceAnime === 'Unknown') && !!firstAppearanceManga;
+
+            if (isMangaOnly) {
+                mangaImage = singleImage;
+            } else {
+                animeImage = singleImage;
+            }
         }
 
-        await this.characterModel.updateOne(
+        const existingCharacter = await this.characterModel.findOne({ name });
+        let id = existingCharacter ? existingCharacter.id : await ScraperUtil.getNextId(this.characterModel);
+
+        await this.characterModel.findOneAndUpdate(
             { name },
             {
-                name, status, gender, specie, kanji, romaji,
+                id, name, status, gender, specie, kanji, romaji,
                 occupation, firstAppearanceManga, firstAppearanceAnime,
                 animeImage, mangaImage
             },
-            { upsert: true }
+            { upsert: true, new: true }
         );
         this.logger.log(`Upserted character: ${name}`);
     }

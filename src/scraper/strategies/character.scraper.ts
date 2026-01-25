@@ -73,12 +73,12 @@ export class CharacterScraper {
             status = ScraperUtil.cleanText(collapsible.length ? collapsible.text() : statusEl.find('.pi-data-value').text());
         }
 
-        const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
+        const getInfo = (source: string | string[]) => ScraperUtil.getInfoboxValue(infobox, source);
 
         const gender = getInfo('gender');
-        const specie = getInfo('species') || getInfo('race');
+        const specie = getInfo(['species', 'race']);
         const kanji = getInfo('kanji');
-        const romaji = getInfo('rōmaji') || getInfo('romaji');
+        const romaji = getInfo(['rōmaji', 'romaji']);
         const occupation = getInfo('occupation');
         const firstAppearanceManga = getInfo('debut');
         const firstAppearanceAnime = getInfo('debutanime');

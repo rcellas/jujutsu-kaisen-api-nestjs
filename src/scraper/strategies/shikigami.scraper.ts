@@ -49,10 +49,10 @@ export class ShikigamiScraper {
         const name = $('h1#firstHeading, h1.page-header__title').text().trim();
         const infobox = $('aside.portable-infobox');
 
-        const getInfo = (source: string) => ScraperUtil.getInfoboxValue(infobox, source);
+        const getInfo = (source: string | string[]) => ScraperUtil.getInfoboxValue(infobox, source);
 
         const kanji = getInfo('kanji');
-        const romaji = getInfo('rōmaji') || getInfo('romaji');
+        const romaji = getInfo(['rōmaji', 'romaji']);
         const user = getInfo('user');
         const firstAppearanceManga = getInfo('debut');
         const firstAppearanceAnime = getInfo('debutanime');

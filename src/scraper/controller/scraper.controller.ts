@@ -12,6 +12,8 @@ export class ScraperController {
         await this.scraperService.scrapeCharacters();
         await this.scraperService.scrapeLocations();
         await this.scraperService.scrapeTechniques();
+        await this.scraperService.scrapeShikigamis();
+        await this.scraperService.linkRelationships();
         return { message: 'Scraping initiated' };
     }
 }
